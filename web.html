@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity Developer | Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: #111111;
+            --accent: #00f2ff; /* Cyan eléctrico */
+            --accent-soft: rgba(0, 242, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --gradient: linear-gradient(135deg, #00f2ff 0%, #0066ff 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* --- Background Animation --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 8%;
+            position: sticky;
+            top: 0;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .logo span { color: var(--accent); }
+
+        nav ul { display: flex; list-style: none; gap: 2rem; }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover { color: var(--accent); }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #fff 40%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-dim);
+            max-width: 600px;
+            font-size: 1.1rem;
+        }
+
+        /* --- Projects Grid --- */
+        .projects-section {
+            padding: 4rem 8%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border 0.3s ease;
+        }
+
+        .card:hover {
+            border: 1px solid var(--accent);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .card-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, var(--card-bg), transparent);
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            min-height: 45px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--text-main);
+            color: #000;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: var(--accent);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            nav { padding: 1.5rem 5%; }
+            .hero h1 { font-size: 3rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+        <div class="logo">UNITY<span>//</span>DEV</div>
+        <ul>
+            <li><a href="#projects">Work</a></li>
+            <li><a href="mailto:tuemail@ejemplo.com">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Building Digital<br>Realities.</h1>
+        <p>Proyectos desarrollados en Unity 3D centrados en optimización, mecánicas de juego y fidelidad visual.</p>
+    </section>
+
+    <section class="projects-section" id="projects">
+        <div class="grid">
+            
+            <div class="card" data-tilt data-tilt-glare data-tilt-max-glare="0.1">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80&w=800')"></div>
+                <div class="card-content">
+                    <span class="tag">Action / HDRP</span>
+                    <h3>Cyber-Katana</h3>
+                    <p>Un sistema de combate melee en primera persona con físicas de corte en tiempo real.</p>
+                    <a href="#" class="btn">View Source →</a>
+                </div>
+            </div>
+
+            <div class="card" data-tilt data-tilt-glare data-tilt-max-glare="0.1">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800')"></div>
+                <div class="card-content">
+                    <span class="tag">Simulation / URP</span>
+                    <h3>Space Colony</h3>
+                    <p>Gestor de recursos masivo con IA avanzada para NPCs y optimización de DOTS.</p>
+                    <a href="#" class="btn">View Demo →</a>
+                </div>
+            </div>
+
+            <div class="card" data-tilt data-tilt-glare data-tilt-max-glare="0.1">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1592477383748-8e61e7d6107b?auto=format&fit=crop&q=80&w=800')"></div>
+                <div class="card-content">
+                    <span class="tag">Shader Lab / VFX</span>
+                    <h3>Void Shaders</h3>
+                    <p>Colección de shaders personalizados inspirados en agujeros negros y distorsión espacial.</p>
+                    <a href="#" class="btn">Get Package →</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // --- Particle Background Engine ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = '#00f2ff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            initCanvas();
+            createParticles();
+        });
+
+        initCanvas();
+        createParticles();
+        animate();
+
+        // --- Intersection Observer for Scroll Animations ---
+        const observerOptions = { threshold: 0.2 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = "0";
+            card.style.transform = "translateY(40px)";
+            card.style.transition = "all 0.8s cubic-bezier(0.2, 1, 0.3, 1)";
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
